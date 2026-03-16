@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -286,260 +287,176 @@ Nota Final<br>
 <footer>
 Sistema de Avaliação - CTG Chama Nativa © 2026
 </footer>
-
-
 <script>
 
-const URL="https://script.google.com/macros/s/AKfycbw4rtji402hM3m8z0-AiO5Fy9NozOCIHk7Aiy4DAV3wUdw7M6u6A9HKEIv4erqaaSXV/exec";
+const URL = "https://script.google.com/macros/s/AKfycbw4rtji402hM3m8z0-AiO5Fy9NozOCIHk7Aiy4DAV3wUdw7M6u6A9HKEIv4erqaaSXV/exec"; // <--- COLOQUE SUA URL AQUI
 
-
-window.onload=()=>{
-const userLogado=localStorage.getItem("avaliadorDados");
-if(userLogado)exibirSistema(JSON.parse(userLogado));
+window.onload = () => {
+    const userLogado = localStorage.getItem("avaliadorDados");
+    if (userLogado) exibirSistema(JSON.parse(userLogado));
 }
 
+function fazerLogin() {
+    const u = document.getElementById("userLogin").value;
+    const p = document.getElementById("passLogin").value;
+    const btn = document.getElementById("btnLogin");
 
-function fazerLogin(){
+    if (!u || !p) return alert("Preencha usuário e senha");
 
-const u=userLogin.value;
-const p=passLogin.value;
-const btn=btnLogin;
+    btn.disabled = true;
+    btn.innerText = "VERIFICANDO...";
 
-btn.disabled=true;
-btn.innerText="VERIFICANDO...";
-
-fetch(`${URL}?acao=login&user=${u}&pass=${p}`)
-.then(r=>r.json())
-.then(res=>{
-
-if(res.status==="OK"){
-
-localStorage.setItem("avaliadorDados",JSON.stringify(res));
-exibirSistema(res);
-
-}else{
-
-alert(res.msg);
-btn.disabled=false;
-btn.innerText="ENTRAR";
-
+    // O seu Script GS espera o login via GET (doGet)
+    fetch(`${URL}?acao=login&user=${encodeURIComponent(u)}&pass=${encodeURIComponent(p)}`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status == "OK") {
+                localStorage.setItem("avaliadorDados", JSON.stringify(res));
+                exibirSistema(res);
+            } else {
+                alert(res.msg);
+                btn.disabled = false;
+                btn.innerText = "ENTRAR";
+            }
+        })
+        .catch(err => {
+            alert("Erro ao conectar com o servidor");
+            console.error(err);
+            btn.disabled = false;
+            btn.innerText = "ENTRAR";
+        });
 }
 
+function exibirSistema(d) {
+    document.getElementById("telaLogin").style.display = "none";
+    document.getElementById("appContainer").style.display = "block";
+    document.getElementById("nomeExibicao").innerText = d.nome;
+    document.getElementById("data").innerText = new Date().toLocaleString("pt-BR");
+    carregarCandidatos();
+}
+
+function logout() {
+    localStorage.removeItem("avaliadorDados");
+    location.reload();
+}
+
+function v(id) {
+    let el = document.getElementById(id);
+    return parseFloat((el.value || "0").replace(",", ".")) || 0;
+}
+
+function corrigirNota(c, max) {
+    let n = v(c.id);
+    if (n > max) n = max;
+    if (n < 0) n = 0;
+    c.value = n.toFixed(2).replace(".", ",");
+    calc();
+}
+
+function limitarDecimal(c, max) {
+    let n = v(c.id);
+    if (n > max) {
+        alert("Máximo permitido " + max);
+        c.value = max.toFixed(2).replace(".", ",");
+    }
+    calc();
+}
+
+function calc() {
+    let ritmo = v("notaritmo");
+    let afin = v("notaafi");
+    let interp = v("notaint");
+    let fid = v("fid1") + v("fid2") + v("fid3") + v("fid4") + v("fid5") + v("fid6") + v("fid7");
+    let notaFidelidade = Math.max(0, 1 - fid);
+
+    document.getElementById("descFid").innerText = fid.toFixed(2).replace(".", ",");
+    document.getElementById("notaFid").innerText = notaFidelidade.toFixed(2).replace(".", ",");
+
+    let final = ritmo + afin + interp + notaFidelidade - v("desctempo") - v("descind");
+    if (final < 0) final = 0;
+    document.getElementById("notaFinal").innerText = final.toFixed(2).replace(".", ",");
+}
+
+function carregarCandidatos() {
+    fetch(URL + "?acao=candidatos")
+        .then(r => r.json())
+        .then(lista => {
+            let sel = document.getElementById("codigo");
+            sel.innerHTML = '<option value="">Selecione CÓDIGO</option>';
+            window.listaCandidatosGlobal = lista; // Armazena para busca posterior
+            lista.forEach(c => {
+                sel.innerHTML += `<option value="${c.codigo}">${c.codigo}</option>`;
+            });
+        });
+}
+
+document.getElementById("codigo").addEventListener("change", function() {
+    let c = window.listaCandidatosGlobal.find(x => String(x.codigo) === String(this.value));
+    if (!c) return;
+    document.getElementById("categoria").innerText = c.categoria || "";
+    document.getElementById("concorrente").innerText = c.concorrente || "";
+    document.getElementById("entidade").innerText = c.entidade || "";
+    document.getElementById("municipio").innerText = c.municipio || "";
+    document.getElementById("rt").innerText = c.rt || "";
 });
 
+function salvar() {
+    const user = JSON.parse(localStorage.getItem("avaliadorDados"));
+    const cod = document.getElementById("codigo").value;
+    if (!cod) return alert("Selecione um candidato");
+
+    const btn = document.querySelector(".btn-salvar");
+    btn.disabled = true;
+    btn.innerText = "SALVANDO...";
+
+    let payload = {
+        usuarioLogin: user.usuario,
+        avaliadorNome: user.nome,
+        codigo: cod,
+        categoria: document.getElementById("categoria").innerText,
+        concorrente: document.getElementById("concorrente").innerText,
+        entidade: document.getElementById("entidade").innerText,
+        municipio: document.getElementById("municipio").innerText,
+        rt: document.getElementById("rt").innerText,
+        ritmo: v("notaritmo"),
+        obsritmo: document.getElementById("obsritmo").value,
+        afinacao: v("notaafi"),
+        obsafin: document.getElementById("obsafin").value,
+        interpretacao: v("notaint"),
+        obsinter: document.getElementById("obsinter").value,
+        fid1: v("fid1"), fid2: v("fid2"), fid3: v("fid3"), fid4: v("fid4"),
+        fid5: v("fid5"), fid6: v("fid6"), fid7: v("fid7"),
+	obsfid: document.getElementById("obsfid").value,
+        descfid: document.getElementById("descFid").innerText,
+        notafid: document.getElementById("notaFid").innerText,
+        desctempo: v("desctempo"),
+        descind: v("descind"),
+        obsgeral: document.getElementById("obsGeral").value,
+        notafinal: document.getElementById("notaFinal").innerText,
+        data: document.getElementById("data").innerText
+    };
+
+    fetch(URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.status == "OK") {
+            alert("Avaliação salva com sucesso!");
+            location.reload();
+        } else {
+            alert("Erro: " + res.msg);
+            btn.disabled = false;
+            btn.innerText = "SALVAR AVALIAÇÃO";
+        }
+    })
+    .catch(err => {
+        alert("Erro ao salvar");
+        btn.disabled = false;
+        btn.innerText = "SALVAR AVALIAÇÃO";
+    });
 }
-
-
-function exibirSistema(d){
-
-telaLogin.style.display="none";
-appContainer.style.display="block";
-
-nomeExibicao.innerText=d.nome;
-
-data.innerText=new Date().toLocaleString("pt-BR");
-
-carregarCandidatos();
-
-}
-
-
-function logout(){
-
-localStorage.removeItem("avaliadorDados");
-location.reload();
-
-}
-
-
-function v(id){
-
-let el=document.getElementById(id);
-return parseFloat((el.value||"0").replace(",","."))||0;
-
-}
-
-
-function corrigirNota(c,max){
-
-let n=v(c.id);
-
-if(n>max)n=max;
-if(n<0)n=0;
-
-c.value=n.toFixed(2).replace(".",",");
-
-calc();
-
-}
-
-
-function limitarDecimal(c,max){
-
-let n=v(c.id);
-
-if(n>max){
-
-alert("Máximo permitido "+max);
-c.value=max.toFixed(2).replace(".",",");
-
-}
-
-calc();
-
-}
-
-
-function calc(){
-
-let ritmo = v("notaritmo");
-let afin  = v("notaafi");
-let interp = v("notaint");
-
-let fid =
-v("fid1")+
-v("fid2")+
-v("fid3")+
-v("fid4")+
-v("fid5")+
-v("fid6")+
-v("fid7");
-
-let notaFidelidade = Math.max(0, 1 - fid);
-
-document.getElementById("descFid").innerText =
-fid.toFixed(2).replace(".",",");
-
-document.getElementById("notaFid").innerText =
-notaFidelidade.toFixed(2).replace(".",",");
-
-let final =
-ritmo +
-afin +
-interp +
-notaFidelidade -
-v("desctempo") -
-v("descind");
-
-if(final < 0) final = 0;
-
-document.getElementById("notaFinal").innerText =
-final.toFixed(2).replace(".",",");
-
-}
-
-
-let candidatos=[];
-
-function carregarCandidatos(){
-
-fetch(URL+"?acao=candidatos")
-.then(r=>r.json())
-.then(lista=>{
-
-candidatos=lista;
-
-let sel=document.getElementById("codigo");
-
-sel.innerHTML='<option value="">Selecione</option>';
-
-lista.forEach(c=>{
-
-sel.innerHTML+=`<option value="${c.codigo}">${c.codigo}</option>`;
-
-});
-
-});
-
-}
-
-
-document.getElementById("codigo").addEventListener("change", function(){
-
-let codigoSelecionado = this.value;
-
-let c = candidatos.find(x => String(x.codigo) === String(codigoSelecionado));
-
-if(!c) return;
-
-document.getElementById("categoria").innerText = c.categoria || "";
-document.getElementById("concorrente").innerText = c.concorrente || "";
-document.getElementById("entidade").innerText = c.entidade || "";
-document.getElementById("municipio").innerText = c.municipio || "";
-document.getElementById("rt").innerText = c.rt || "";
-
-});
-
-
-function salvar(){
-
-const user=JSON.parse(localStorage.getItem("avaliadorDados"));
-
-if(!codCandidato.value){
-
-alert("Selecione candidato");
-return;
-
-}
-
-let payload={
-
-usuarioLogin:user.usuario,
-avaliadorNome:user.nome,
-
-codigo:codCandidato.value,
-
-categoria:categoria.innerText,
-concorrente:concorrente.innerText,
-entidade:entidade.innerText,
-municipio:municipio.innerText,
-rt:rt.innerText,
-
-ritmo:v("notaritmo"),
-obsritmo:obsritmo.value,
-
-afinacao:v("notaafi"),
-obsafin:obsafin.value,
-
-interpretacao:v("notaint"),
-obsinter:obsinter.value,
-
-fid1:v("fid1"),
-fid2:v("fid2"),
-fid3:v("fid3"),
-fid4:v("fid4"),
-fid5:v("fid5"),
-fid6:v("fid6"),
-fid7:v("fid7"),
-
-descfid:descFid.innerText,
-notafid:notaFid.innerText,
-
-desctempo:v("desctempo"),
-descind:v("descind"),
-
-obsgeral:obsGeral.value,
-
-notafinal:notaFinal.innerText,
-
-data:data.innerText
-
-};
-
-fetch(URL,{
-method:"POST",
-body:JSON.stringify(payload)
-})
-.then(()=>{
-
-alert("Avaliação salva");
-location.reload();
-
-});
-
-}
-
 </script>
-
 </body>
 </html>
