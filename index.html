@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Avaliação – Intérprete</title>
+
+<style>
+body{font-family:Arial;background:#9c8a8a;margin:0;padding:10px;}
+.container{max-width:1200px;margin:auto;background:#fff;border:2px solid #000; display:none;} 
+.header{background:#ffe066;border-bottom:2px solid #000;padding:10px}
+
+#telaLogin{
+max-width:400px;
+margin:100px auto;
+background:#fff;
+padding:20px;
+border:2px solid #000;
+text-align:center;
+}
+
+#telaLogin input{
+width:90%;
+padding:10px;
+margin:10px 0;
+border:1px solid #000;
+}
+
+#telaLogin button{
+background:#fc7a00;
+padding:10px 40px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.linha{
+display:grid;
+grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+gap:5px;
+padding:5px;
+background:#ffe066;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1.3fr 1fr;
+grid-template-rows:auto auto auto;
+gap:8px;
+padding:6px;
+}
+
+.box{
+border:2px solid #000;
+background:#ffe066;
+padding:5px;
+font-size:13px
+}
+
+.box h3{text-align:center;margin:0 0 5px}
+
+textarea{width:100%;height:60px}
+
+.notafinal{
+font-size:22px;
+font-weight:bold;
+text-align:center
+}
+
+select,input{width:100%}
+
+.linha-nota{
+display:flex;
+align-items:center;
+gap:6px;
+margin-bottom:6px
+}
+
+.linha-nota .pontilhado{
+flex:1;
+border-bottom:1px dotted #000
+}
+
+.input-nota{
+width:42px;
+text-align:center
+}
+
+.resumo-direita{
+display:flex;
+justify-content:space-between;
+font-weight:bold;
+margin-top:6px;
+border-top:1px solid #000;
+padding-top:4px
+}
+
+.grid-inferior{
+display:grid;
+grid-template-columns:1.6fr 2.4fr 0.8fr;
+gap:6px;
+padding:6px
+}
+
+.grid-rodape{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:6px;
+padding:6px
+}
+
+.btns{
+display:flex;
+justify-content:center;
+padding:15px;
+gap:20px
+}
+
+button{
+padding:10px 30px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer
+}
+
+.btn-salvar{
+background:#fc7a00;
+color:#020202;
+border:2px solid #000;
+border-radius:6px;
+}
+
+.btn-logout{
+background:#ff4444;
+color:#fff;
+border:2px solid #000;
+border-radius:6px;
+font-size:12px!important;
+padding:5px 15px!important;
+}
+
+.box-ritmo{grid-column:1;grid-row:1;}
+.box-afinacao{grid-column:1;grid-row:2;}
+.box-interpretacao{grid-column:1;grid-row:3;}
+.box-fidelidade{grid-column:2;grid-row:1 / span 3;}
+
+footer{
+text-align:center;
+margin-top:20px;
+font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="telaLogin">
+<img src="https://raw.githubusercontent.com/CCN1989/Imagens/refs/heads/main/Logo%20pequeno.png" height="70">
+<h2>Acesso Avaliador</h2>
+<input type="text" id="userLogin" placeholder="Usuário (Ex: AV1)">
+<input type="password" id="passLogin" placeholder="Senha">
+<button onclick="fazerLogin()" id="btnLogin">ENTRAR</button>
+</div>
+
+
+<div id="appContainer" class="container">
+
+<div class="header" style="display:grid;grid-template-columns:100px 1fr 100px;align-items:center">
+
+<img src="https://raw.githubusercontent.com/CCN1989/Imagens/refs/heads/main/Logo%20pequeno.png" height="70">
+
+<div style="text-align:center">
+<strong>MTG – MOVIMENTO TRADICIONALISTA GAÚCHO</strong><br>
+25º Rodeio Nativista de Esteio – CTG Chama Nativa – 12ª RT<br>
+(24, 25 e 26 de Abril de 2026)<br>
+<strong>Planilha de Avaliação – Intérprete Vocal</strong>
+</div>
+
+<img src="https://github.com/CCN1989/Imagens/blob/main/12RT.png?raw=true" height="70">
+
+</div>
+
+
+<div style="padding:8px;background:#ffe066;border-bottom:2px solid #000">
+<select id="codigo">
+<option value="">Selecione CÓDIGO do candidato *</option>
+</select>
+</div>
+
+<div class="linha">
+<div>Categoria:<br><b id="categoria"></b></div>
+<div>Concorrente:<br><b id="concorrente"></b></div>
+<div>Entidade:<br><b id="entidade"></b></div>
+<div>Município:<br><b id="municipio"></b></div>
+<div>RT:<br><b id="rt"></b></div>
+</div>
+
+
+<div class="grid">
+
+<div class="box box-ritmo">
+<h3>Ritmo (2,00)</h3>
+<div class="linha-nota">
+<span>Nota</span>
+<input id="notaritmo" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,2)" oninput="limitarDecimal(this,2)">
+</div>
+<textarea id="obsritmo"placeholder="Observação Ritmo"></textarea>
+</div>
+
+<div class="box box-afinacao">
+<h3>Afinação (3,00)</h3>
+<div class="linha-nota">
+<span>Nota</span>
+<input id="notaafi" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,3)" oninput="limitarDecimal(this,3)">
+</div>
+<textarea id="obsafin"placeholder="Observação Afinação"></textarea>
+</div>
+
+<div class="box box-interpretacao">
+<h3>Interpretação (4,00)</h3>
+<div class="linha-nota">
+<span>Nota</span>
+<input id="notaint" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,4)" oninput="limitarDecimal(this,4)">
+</div>
+<textarea id="obsinter"placeholder="Observação Interpretação"></textarea>
+</div>
+
+<div class="box box-fidelidade">
+
+<h3>Fidelidade à letra (1,00)</h3>
+
+<div class="linha-nota"><span>Troca palavras (até 0,05)</span><span class="pontilhado"></span><input id="fid1" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.05)"></div>
+<div class="linha-nota"><span>Troca verso (até 0,10)</span><span class="pontilhado"></span><input id="fid2" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.10)"></div>
+<div class="linha-nota"><span>Omissão palavras (até 0,05)</span><span class="pontilhado"></span><input id="fid3" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.05)"></div>
+<div class="linha-nota"><span>Omissão verso (até 0,10)</span><span class="pontilhado"></span><input id="fid4" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.10)"></div>
+<div class="linha-nota"><span>Troca estrofe (até 0,20)</span><span class="pontilhado"></span><input id="fid5" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.20)"></div>
+<div class="linha-nota"><span>Omissão estrofe (até 0,30)</span><span class="pontilhado"></span><input id="fid6" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.30)"></div>
+<div class="linha-nota"><span>Não entrega letra (até 1,00)</span><span class="pontilhado"></span><input id="fid7" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 1.00)"></div>
+
+<div class="resumo-direita">
+<span>DESC: <b id="descFid">0,00</b></span>
+<span>Nota: <b id="notaFid">1,00</b></span>
+</div>
+
+<textarea id="obsfid"placeholder="Observação Fidelidade"></textarea>
+
+</div>
+
+</div>
+
+  <div class="grid-inferior">
+    <div class="box">
+        <b>Descontos:</b><br>
+        <div class="linha-nota">Tempo 5 min: </span><span class="pontilhado"></span>
+        <input id="desctempo" class="input-nota"placeholder="DESC"onblur="corrigirNota(this)"></div>
+        <div class="linha-nota">Indumentária (até 2,00): </span><span class="pontilhado"></span>
+        <input id="descind" class="input-nota"placeholder="DESC"oninput="limitarDecimal(this,2.00)"onblur="corrigirNota(this,2.00)"></div>
+        <h3>Atenção: No item Descontos, observar o Art. 19, § 1º. e § 2º. e Art. 38 § 1º. do Regulamento.</h3>
+    </div>
+
+<div class="box">
+<b>Observações Gerais</b>
+<textarea id="obsGeral"placeholder="Observação Geral"></textarea>
+</div>
+
+<div class="box notafinal">
+Nota Final<br>
+<span id="notaFinal">1,00</span>
+</div>
+
+</div>
+
+
+<div class="grid-rodape">
+<div class="box">Data/Hora: <span id="data"></span></div>
+<div class="box">Avaliador: <b id="nomeExibicao"></b></div>
+</div>
+
+
+<div class="btns">
+<button onclick="logout()" class="btn-logout">Sair</button>
+<button onclick="salvar()" class="btn-salvar">SALVAR AVALIAÇÃO</button>
+</div>
+
+</div>
+
+
+<footer>
+Sistema de Avaliação - CTG Chama Nativa © 2026
+</footer>
+
+
+<script>
+
+const URL="https://script.google.com/macros/s/AKfycbw4rtji402hM3m8z0-AiO5Fy9NozOCIHk7Aiy4DAV3wUdw7M6u6A9HKEIv4erqaaSXV/exec";
+
+
+window.onload=()=>{
+const userLogado=localStorage.getItem("avaliadorDados");
+if(userLogado)exibirSistema(JSON.parse(userLogado));
+}
+
+
+function fazerLogin(){
+
+const u=userLogin.value;
+const p=passLogin.value;
+const btn=btnLogin;
+
+btn.disabled=true;
+btn.innerText="VERIFICANDO...";
+
+fetch(`${URL}?acao=login&user=${u}&pass=${p}`)
+.then(r=>r.json())
+.then(res=>{
+
+if(res.status==="OK"){
+
+localStorage.setItem("avaliadorDados",JSON.stringify(res));
+exibirSistema(res);
+
+}else{
+
+alert(res.msg);
+btn.disabled=false;
+btn.innerText="ENTRAR";
+
+}
+
+});
+
+}
+
+
+function exibirSistema(d){
+
+telaLogin.style.display="none";
+appContainer.style.display="block";
+
+nomeExibicao.innerText=d.nome;
+
+data.innerText=new Date().toLocaleString("pt-BR");
+
+carregarCandidatos();
+
+}
+
+
+function logout(){
+
+localStorage.removeItem("avaliadorDados");
+location.reload();
+
+}
+
+
+function v(id){
+
+let el=document.getElementById(id);
+return parseFloat((el.value||"0").replace(",","."))||0;
+
+}
+
+
+function corrigirNota(c,max){
+
+let n=v(c.id);
+
+if(n>max)n=max;
+if(n<0)n=0;
+
+c.value=n.toFixed(2).replace(".",",");
+
+calc();
+
+}
+
+
+function limitarDecimal(c,max){
+
+let n=v(c.id);
+
+if(n>max){
+
+alert("Máximo permitido "+max);
+c.value=max.toFixed(2).replace(".",",");
+
+}
+
+calc();
+
+}
+
+
+function calc(){
+
+let ritmo = v("notaritmo");
+let afin  = v("notaafi");
+let interp = v("notaint");
+
+let fid =
+v("fid1")+
+v("fid2")+
+v("fid3")+
+v("fid4")+
+v("fid5")+
+v("fid6")+
+v("fid7");
+
+let notaFidelidade = Math.max(0, 1 - fid);
+
+document.getElementById("descFid").innerText =
+fid.toFixed(2).replace(".",",");
+
+document.getElementById("notaFid").innerText =
+notaFidelidade.toFixed(2).replace(".",",");
+
+let final =
+ritmo +
+afin +
+interp +
+notaFidelidade -
+v("desctempo") -
+v("descind");
+
+if(final < 0) final = 0;
+
+document.getElementById("notaFinal").innerText =
+final.toFixed(2).replace(".",",");
+
+}
+
+
+let candidatos=[];
+
+function carregarCandidatos(){
+
+fetch(URL+"?acao=candidatos")
+.then(r=>r.json())
+.then(lista=>{
+
+candidatos=lista;
+
+let sel=document.getElementById("codigo");
+
+sel.innerHTML='<option value="">Selecione</option>';
+
+lista.forEach(c=>{
+
+sel.innerHTML+=`<option value="${c.codigo}">${c.codigo}</option>`;
+
+});
+
+});
+
+}
+
+
+document.getElementById("codigo").addEventListener("change", function(){
+
+let codigoSelecionado = this.value;
+
+let c = candidatos.find(x => String(x.codigo) === String(codigoSelecionado));
+
+if(!c) return;
+
+document.getElementById("categoria").innerText = c.categoria || "";
+document.getElementById("concorrente").innerText = c.concorrente || "";
+document.getElementById("entidade").innerText = c.entidade || "";
+document.getElementById("municipio").innerText = c.municipio || "";
+document.getElementById("rt").innerText = c.rt || "";
+
+});
+
+
+function salvar(){
+
+const user=JSON.parse(localStorage.getItem("avaliadorDados"));
+
+if(!codCandidato.value){
+
+alert("Selecione candidato");
+return;
+
+}
+
+let payload={
+
+usuarioLogin:user.usuario,
+avaliadorNome:user.nome,
+
+codigo:codCandidato.value,
+
+categoria:categoria.innerText,
+concorrente:concorrente.innerText,
+entidade:entidade.innerText,
+municipio:municipio.innerText,
+rt:rt.innerText,
+
+ritmo:v("notaritmo"),
+obsritmo:obsritmo.value,
+
+afinacao:v("notaafi"),
+obsafin:obsafin.value,
+
+interpretacao:v("notaint"),
+obsinter:obsinter.value,
+
+fid1:v("fid1"),
+fid2:v("fid2"),
+fid3:v("fid3"),
+fid4:v("fid4"),
+fid5:v("fid5"),
+fid6:v("fid6"),
+fid7:v("fid7"),
+
+descfid:descFid.innerText,
+notafid:notaFid.innerText,
+
+desctempo:v("desctempo"),
+descind:v("descind"),
+
+obsgeral:obsGeral.value,
+
+notafinal:notaFinal.innerText,
+
+data:data.innerText
+
+};
+
+fetch(URL,{
+method:"POST",
+body:JSON.stringify(payload)
+})
+.then(()=>{
+
+alert("Avaliação salva");
+location.reload();
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
