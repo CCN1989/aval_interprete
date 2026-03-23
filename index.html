@@ -7,8 +7,8 @@
 
 <style>
 body{font-family:Arial;background:#9c8a8a;margin:0;padding:10px;}
-.container{max-width:1200px;margin:auto;background:#fff;border:2px solid #000; display:none;} 
-.header{background:#ffe066;border-bottom:2px solid #000;padding:10px}
+.container{max-width:1800px;margin:auto;background:#fff;border:2px solid #000; display:none;} 
+.header{background:#fffb00;border-bottom:2px solid #000;padding:10px}
 
 #telaLogin{
 max-width:400px;
@@ -228,13 +228,13 @@ font-size:12px;
 
 <h3>Fidelidade à letra (1,00)</h3>
 
-<div class="linha-nota"><span>Troca palavras (até 0,05)</span><span class="pontilhado"></span><input id="fid1" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.05)"></div>
-<div class="linha-nota"><span>Troca verso (até 0,10)</span><span class="pontilhado"></span><input id="fid2" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.10)"></div>
-<div class="linha-nota"><span>Omissão palavras (até 0,05)</span><span class="pontilhado"></span><input id="fid3" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.05)"></div>
-<div class="linha-nota"><span>Omissão verso (até 0,10)</span><span class="pontilhado"></span><input id="fid4" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.10)"></div>
-<div class="linha-nota"><span>Troca estrofe (até 0,20)</span><span class="pontilhado"></span><input id="fid5" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.20)"></div>
-<div class="linha-nota"><span>Omissão estrofe (até 0,30)</span><span class="pontilhado"></span><input id="fid6" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 0.30)"></div>
-<div class="linha-nota"><span>Não entrega letra (até 1,00)</span><span class="pontilhado"></span><input id="fid7" class="input-nota"placeholder="Desc"oninput="limitarDecimal(this, 1.00)"></div>
+<div class="linha-nota"><span>Troca palavras (até 0,05)</span><span class="pontilhado"></span><input id="fid1" class="input-nota"placeholder="Desc"onblur="corrigirNota(this,0.05)"oninput="limitarDecimal(this, 0.05)"></div>
+<div class="linha-nota"><span>Troca verso (até 0,10)</span><span class="pontilhado"></span><input id="fid2" class="input-nota"placeholder="Desc"onblur="corrigirNota(this,0.10)"oninput="limitarDecimal(this, 0.10)"></div>
+<div class="linha-nota"><span>Omissão palavras (até 0,05)</span><span class="pontilhado"></span><input id="fid3" class="input-nota"placeholder="Desc"onblur="corrigirNota(this,0.05)"oninput="limitarDecimal(this, 0.05)"></div>
+<div class="linha-nota"><span>Omissão verso (até 0,10)</span><span class="pontilhado"></span><input id="fid4" class="input-nota"placeholder="Desc"onblur="corrigirNota(this,0.10)"oninput="limitarDecimal(this, 0.10)"></div>
+<div class="linha-nota"><span>Troca estrofe (até 0,20)</span><span class="pontilhado"></span><input id="fid5" class="input-nota"placeholder="Desc"onblur="corrigirNota(this,0.20)"oninput="limitarDecimal(this, 0.20)"></div>
+<div class="linha-nota"><span>Omissão estrofe (até 0,30)</span><span class="pontilhado"></span><input id="fid6" class="input-nota"placeholder="Desc"onblur="corrigirNota(this,0.30)"oninput="limitarDecimal(this, 0.30)"></div>
+<div class="linha-nota"><span>Não entrega letra (até 1,00)</span><span class="pontilhado"></span><input id="fid7" class="input-nota"placeholder="Desc"onblur="corrigirNota(this,1.00)"oninput="limitarDecimal(this, 1.00)"></div>
 
 <div class="resumo-direita">
 <span>DESC: <b id="descFid">0,00</b></span>
@@ -271,8 +271,8 @@ Nota Final<br>
 
 
 <div class="grid-rodape">
-<div class="box">Data/Hora: <span id="data"></span></div>
-<div class="box">Avaliador: <b id="nomeExibicao"></b></div>
+<div class="box">Data/Hora: <span id="data"></span><br>
+<span>Avaliador: <b id="nomeExibicao"></b>
 </div>
 
 
@@ -285,7 +285,7 @@ Nota Final<br>
 
 
 <footer>
-Sistema de Avaliação - Feito por © NossoEventoRS - Conforme Regulamento Artístico do MTG (2025)
+Sistema de Avaliação - Produzido por © NossoEventoRS - Conforme Regulamento Artístico do MTG (2025)
 </footer>
 <script>
 
