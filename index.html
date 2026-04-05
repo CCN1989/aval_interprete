@@ -6,9 +6,9 @@
 <title>Avaliação – Intérprete</title>
 
 <style>
-body{font-family:Arial;background:#9c8a8a;margin:0;padding:10px;}
-.container{max-width:1800px;margin:auto;background:#fff;border:2px solid #000; display:none;} 
-.header{background:#fffb00;border-bottom:2px solid #000;padding:10px}
+body{font-family:Arial;background:#9c8a8a;margin:auto;padding:auto}
+.container{max-width:auto;margin:auto;background:#fff;border:2px solid #000; display:none;} 
+.header{background:#ffffff;border-bottom:2px solid #000;padding:10px}
 
 #telaLogin{
 max-width:400px;
@@ -201,7 +201,7 @@ font-size:12px;
 <h3>Ritmo (2,00)</h3>
 <div class="linha-nota">
 <span>Nota</span>
-<input id="notaritmo" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,2.00)" oninput="limitarDecimal(this,2.00)">
+<input id="notaritmo" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,2)" oninput="limitarDecimal(this,2)">
 </div>
 <textarea id="obsritmo"placeholder="Observação Ritmo"></textarea>
 </div>
@@ -210,7 +210,7 @@ font-size:12px;
 <h3>Afinação (3,00)</h3>
 <div class="linha-nota">
 <span>Nota</span>
-<input id="notaafi" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,3.00)" oninput="limitarDecimal(this,3.00)">
+<input id="notaafi" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,3)" oninput="limitarDecimal(this,3)">
 </div>
 <textarea id="obsafin"placeholder="Observação Afinação"></textarea>
 </div>
@@ -219,7 +219,7 @@ font-size:12px;
 <h3>Interpretação (4,00)</h3>
 <div class="linha-nota">
 <span>Nota</span>
-<input id="notaint" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,4.00)" oninput="limitarDecimal(this,4.00)">
+<input id="notaint" class="input-nota" placeholder="Nota"onblur="corrigirNota(this,4)" oninput="limitarDecimal(this,4)">
 </div>
 <textarea id="obsinter"placeholder="Observação Interpretação"></textarea>
 </div>
